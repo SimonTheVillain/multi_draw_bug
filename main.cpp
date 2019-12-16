@@ -20,14 +20,14 @@ static void error_callback(int error, const char* description)
 {
 	fprintf(stderr, "Error: %s\n", description);
 }
-int colums = 215;
+bool workaround = true;
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-		colums++;
-	cout << colums << endl;
+		workaround = !workaround;
+
 }
 int main(void)
 {
@@ -103,7 +103,6 @@ int main(void)
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
-
 		vector<GLint> first(base,0);
 		vector<GLsizei > count(base,base);
 
@@ -112,14 +111,18 @@ int main(void)
 			count[i] = i;
 		}
 
-		//THIS
-		//glMultiDrawArrays(GL_POINTS,&first[0],&count[0],base);
-
-		//should behave like THIS
-		for(int i=0;i<base;i++){
-			glDrawArrays(GL_POINTS, first[i], count[i]);
+		if(!workaround){
+			//THIS DOESN't WORK but should behave like
+			glMultiDrawArrays(GL_POINTS,&first[0],&count[0],base);
+		}else{
+			//THIS, which draws a perfect triangle
+			for(int i=0;i<base;i++){
+				glDrawArrays(GL_POINTS, first[i], count[i]);
+			}
+			//IT DOESN't THOUGH
 		}
-		//IT DOESN't THOUGH
+
+
 
 
 
